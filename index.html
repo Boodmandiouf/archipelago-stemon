@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Archipelago — La Taverne des Jeux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;900&family=Pirata+One&family=EB+Garamond:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #1a1410; 
+    --parchment: #f5e7ce; /* Parchemin un poil plus clair pour la lisibilité */
+    --parchment-dim: #cfbfa2; 
+    --wood-dark: #3a2517; 
+    --wood-border: #5d432f; 
+    --accent-gold: #c9a050; 
+    --accent-gold-bright: #ffdf9e; 
+    --accent-crimson: #a61c1c; /* Rouge un peu plus vif */
+    --text-dark: #1c120c; /* Texte presque noir pour un contraste maximal */
+    --text-light: #f2e3c9; 
+    --text-dim: #9c8265;
+    
+    --shadow-candle: 0 6px 20px rgba(0, 0, 0, 0.8);
+    --glow-gold: 0 0 15px rgba(255, 223, 158, 0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cinzel', serif;
+    background-color: var(--bg-color);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMzFjMTUiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMCAwaDQwdjQwSDBWMHptMjAgMjBoMjB2MjBIMjBWMjB6TTAgMjBoMjB2MjBIMFYyMHoyMCAwaDIwdjIwSDIwVjB6Ii8+PC9nPjwvZz48L3N2Zz4=');
+  }
+
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    top: 0; bottom: 0; width: 40px;
+    background: linear-gradient(to right, #000, transparent);
+    z-index: 10; pointer-events: none;
+  }
+  body::after { right: 0; background: linear-gradient(to left, #000, transparent); }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 20px 16px 160px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 35px 0;
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+    border-radius: 12px;
+    border: 3px solid var(--wood-border);
+    margin-bottom: 25px;
+    box-shadow: var(--shadow-candle);
+    position: relative;
+  }
+  
+  .header::before, .header::after {
+    content: '☠';
+    position: absolute;
+    top: 15px;
+    font-size: 24px;
+    color: var(--accent-gold);
+    text-shadow: 1px 1px 2px #000;
+  }
+  .header::before { left: 20px; }
+  .header::after { right: 20px; }
+
+  .header-eyebrow {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--accent-gold);
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .header-title {
+    font-family: 'Pirata One', cursive;
+    font-size: clamp(36px, 9vw, 56px);
+    color: var(--accent-gold-bright);
+    text-shadow: 3px 3px 0 #000, 0 0 20px rgba(201, 160, 80, 0.6);
+    line-height: 1;
+  }
+
+  .header-title2{
+    font-family: 'Pirata One', cursive;
+  font-size: clamp(36px, 9vw, 45px);
+  color: var(--accent-gold-bright);
+  text-shadow: 3px 3px 0 #000, 0 0 20px rgba(201, 160, 80, 0.6);
+  line-height: 1;
+  margin-top: 20px;
+  }
+
+  .header-title span { color: var(--accent-crimson); text-shadow: 3px 3px 0 #000; }
+  
+  .header-line {
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+    margin: 15px auto 0;
+  }
+
+  /* ── USER PANEL (Identification) ── */
+  .user-panel {
+    background-color: var(--parchment);
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIHZpZXdCb3g9IjAgMCA0IDQiPjxwYXRoIGZpbGw9IiNjZGMwYTAiIGZpbGwtb3BhY2l0eT0iMC4zIiBkPSJNMSAzaDF2MUgxVjN6TTAgMGgxdjFIMFYwek0yIDBoMXYxSDJWMHozIDNoMXYxSDNWM3oiLz48L3N2Zz4=');
+    border: 3px solid var(--wood-dark);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    color: var(--text-dark);
+    box-shadow: var(--shadow-candle);
+  }
+
+  .user-panel.active-border {
+    border-color: var(--accent-crimson);
+    box-shadow: 0 0 15px rgba(166, 28, 28, 0.4), var(--shadow-candle);
+  }
+
+  .user-label {
+    display: block;
+    font-family: 'Pirata One', cursive;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--accent-crimson);
+    margin-bottom: 10px;
+  }
+
+  #username {
+    width: 100%;
+    padding: 15px;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 900;
+    background: rgba(255,255,255,0.7);
+    border: 2px solid #a69576;
+    border-radius: 6px;
+    color: #1a1410;
+    outline: none;
+  }
+  #username::placeholder { color: #7a654d; font-weight: normal; font-style: italic; }
+
+  #username:focus {
+    border-color: var(--accent-crimson);
+    background: #fff;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 15px 0;
+    background: linear-gradient(to bottom, var(--bg-color) 85%, transparent);
+  }
+
+  .search-inner { position: relative; }
+  
+  .search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--accent-gold-bright);
+  }
+
+  #search {
+    width: 100%;
+    padding: 16px 16px 16px 54px;
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--wood-dark);
+    border: 3px solid var(--wood-border);
+    border-radius: 30px; 
+    color: var(--text-light);
+    outline: none;
+    box-shadow: inset 0 3px 10px rgba(0,0,0,0.6);
+  }
+
+  #search:focus {
+    border-color: var(--accent-gold-bright);
+    box-shadow: var(--glow-gold), inset 0 3px 10px rgba(0,0,0,0.6);
+  }
+
+  .search-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 0 10px;
+  }
+
+  #count {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--accent-gold);
+  }
+
+  .limit-warning {
+    font-family: 'Pirata One', cursive;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #fff;
+    background: var(--accent-crimson);
+    padding: 4px 14px;
+    border-radius: 4px;
+    display: none;
+    box-shadow: 0 0 15px var(--accent-crimson);
+  }
+
+  /* ── GRID & CARDS ── */
+  #grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .game-card {
+    background-color: var(--parchment);
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNjZGMwYTAiIGZpbGwtb3BhY2l0eT0iMC4yNCI+PHBhdGggZD0iTTAgMGg4MHY4MEgwVjB6bTQwIDQwSDBWMGg0MHY0MHpNMCA0MGg0MHY0MEgwVjQwek00MCAwaDQwdjQwSDQwVjB6bTAgNDBoNDB2NDBINTBWNDB6Ii8+PC9nPjwvZz48L3N2Zz4=');
+    border: 3px solid transparent;
+    border-radius: 8px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 18px;
+    align-items: center; /* Aligné au milieu pour valoriser la grosse checkbox */
+    color: var(--text-dark);
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+    position: relative;
+  }
+
+  .game-card.locked-user {
+    opacity: 0.4;
+    filter: sepia(1) grayscale(0.7);
+    cursor: not-allowed;
+  }
+
+  .game-card:hover:not(.locked-user, .disabled-limit) {
+    transform: translateY(-2px);
+    box-shadow: 6px 12px 22px rgba(0,0,0,0.5);
+    border-color: var(--wood-dark);
+  }
+
+  .game-card.selected {
+    border: 3px solid var(--accent-crimson);
+    background-color: #fffaf0;
+    box-shadow: 0 0 15px rgba(166, 28, 28, 0.2), 4px 4px 10px rgba(0,0,0,0.4);
+  }
+  
+  .game-card.disabled-limit {
+    opacity: 0.25;
+    cursor: not-allowed;
+    filter: grayscale(1);
+  }
+
+  .card-main { flex: 1; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  
+  /* Titre en police Pirate ultra stylisée et lisible */
+  .game-title {
+    font-family: 'Pirata One', cursive;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-dark);
+    letter-spacing: 0.8px;
+    line-height: 1.2;
+  }
+  
+  .game-card.selected .game-title {
+    color: var(--accent-crimson);
+  }
+  
+  .card-toggle {
+    color: #555;
+    transition: transform 0.3s;
+    display: flex;
+    align-items: center;
+  }
+  
+  .game-card.expanded .card-toggle {
+    transform: rotate(180deg);
+    color: var(--accent-crimson);
+  }
+
+  /* Description en EB Garamond : Police de livre ancienne ULTRA lisible */
+  .game-desc {
+    font-family: 'EB Garamond', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #2a1f18;
+    line-height: 1.4;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin-top 0.2s;
+    opacity: 0;
+  }
+
+  .game-card.expanded {
+    align-items: flex-start; /* Repasse en haut quand déroulé */
+  }
+
+  .game-card.expanded .game-desc {
+    max-height: 250px;
+    margin-top: 12px;
+    opacity: 1;
+    border-top: 1px dashed #bfae93;
+    padding-top: 10px;
+  }
+
+  /* ── BOUSSOLE CHECKBOX (Ajustée Gros Format Visuel) ── */
+  .checkbox-wrap { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custom-checkbox {
+    width: 32px; /* Agrandie */
+    height: 32px; /* Agrandie */
+    border: 3px solid var(--wood-dark);
+    border-radius: 50%;
+    position: relative;
+    background: #d9caa7;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  
+  /* L'aiguille de la boussole */
+  .custom-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 12px;
+    width: 3px; height: 20px;
+    background: #554335;
+    transform: rotate(0deg);
+    transition: transform 0.3s, background 0.2s;
+  }
+
+  /* État coché : Changement radical de couleur visuel */
+  .game-card.selected .custom-checkbox {
+    border-color: var(--wood-dark);
+    background: var(--accent-crimson);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4), 0 0 10px rgba(166, 28, 28, 0.4);
+  }
+
+  .game-card.selected .custom-checkbox::before {
+    background: var(--accent-gold-bright);
+    transform: rotate(135deg); /* L'aiguille tourne */
+  }
+
+  /* Surlignage de recherche */
+  .highlight {
+    background-color: rgba(166, 28, 28, 0.15);
+    color: #000;
+    font-weight: bold;
+    border-bottom: 2px dashed var(--accent-crimson);
+  }
+
+  /* ── BOTTOM BAR (Le Coffre fort) ── */
+  .action-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background-color: var(--wood-dark);
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMzFjMTUiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMCAwaDQwdjQwSDBWMHptMjAgMjBoMjB2MjBIMjBWMjB6TTAgMjBoMjB2MjBIMFYyMHoyMCAwaDIwdjIwSDIwVjB6Ii8+PC9nPjwvZz48L3N2Zz4=');
+    border-top: 4px solid var(--wood-border);
+    padding: 22px 20px;
+    z-index: 1000;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.7);
+  }
+  
+  .action-bar::before, .action-bar::after {
+    content: '';
+    position: absolute;
+    top: -4px; width: 24px; height: calc(100% + 4px);
+    background: #2b1b11;
+    border-left: 2px solid var(--wood-border);
+    border-right: 2px solid var(--wood-border);
+    opacity: 0.6;
+  }
+  .action-bar::before { left: 8%; }
+  .action-bar::after { right: 8%; }
+
+  .action-bar-inner {
+    max-width: 850px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; z-index: 2;
+  }
+
+  .selection-count {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent-gold-bright);
+    text-shadow: 2px 2px 0 #000;
+    line-height: 1;
+  }
+
+  .selection-label { font-size: 11px; font-weight: 900; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+
+  .btn-export {
+    font-family: 'Pirata One', cursive;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: #1a1410;
+    background: linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold));
+    border: 3px solid #5a3a1a;
+    padding: 12px 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+  }
+
+  .btn-export:hover:not(:disabled) {
+    background: linear-gradient(180deg, #fff, var(--accent-gold-bright));
+    box-shadow: 0 0 15px var(--accent-gold-bright);
+    transform: translateY(-1px);
+  }
+
+  .btn-export:disabled {
+    background: #2b2520;
+    color: #555;
+    border-color: #1a1512;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: 650px) {
+    #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="header">
+    <div class="header-eyebrow">La Carte des Mondes</div>
+    <h1 class="header-title">ARCHI<span>PELAGO</span></h1>
+    <div class="header-line"></div>
+    <div class="header-title2">st3mon édition </div>
+  </header>
+
+  <div class="user-panel" id="user-panel">
+    <label class="user-label" for="username">Pseudo :</label>
+    <input type="text" id="username" placeholder="Inscris ton nom avant de piller..." oninput="checkUserChange()">
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-inner">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="search" placeholder="Chercher un jeu (Max 3)…" oninput="filterGames()" autocomplete="off">
+    </div>
+    <div class="search-meta">
+      <span id="count">0 jeux trouvé</span>
+      <span class="limit-warning" id="limit-msg">Mille sabords ! C'est 3 jeux max !</span>
+    </div>
+  </div>
+
+  <div id="grid"></div>
+
+</div>
+
+<div class="action-bar">
+  <div class="action-bar-inner">
+    <div class="selection-status">
+      <div class="selection-count"><span id="selected-count">0</span>/3</div>
+      <div class="selection-label">Jeux choisi</div>
+    </div>
+    <button class="btn-export" id="export-btn" onclick="exportSelection()" disabled>Graver le Parchemin (.TXT)</button>
+  </div>
+</div>
+
+<script>
+// Base de données des jeux
+const games = [
+  ["Adventure", "Jeu d'aventure graphique pour l'Atari 2600. Trouvez le calice enchanté et ramenez-le au château jaune."],
+  ["APQuest", "Jeu d'aventure minimaliste inspiré du style 8 bits, avec un déplacement en grille."],
+  ["Aquaria", "Jeu d'action-aventure en vue de côté. Suivez Naija, une femme humanoïde aquatique."],
+  ["Balatro", "Jeu de deck-building de poker roguelike captivant, où vous créez des synergies puissantes."],
+  ["Baldurs Gate 3", "Le célèbre RPG épique de Larian Studios dans l'univers de Donjons & Dragons."],
+  ["Baldurs Gate 3 (Trials of Tav)", "Mode rogue-lite de combat en arène personnalisé créé par la communauté."],
+  ["Banjo-Tooie", "Le célèbre jeu de plateforme 3D rétro de Rare. Rejoignez Banjo et Kazooie."],
+  ["Binding of Isaac: Repentance", "L'extension ultime du rogue-like à succès. Explorez des milliers de nouvelles pièces."],
+  ["Blasphemous", "Metroidvania exigeant dans la terre maudite de Cvstodia. Jouez le Pénitent."],
+  ["Bloons Tower Defense 6", "Jeu de tower defense en 3D massivement populaire."],
+  ["Bomb Rush Cyberfunk", "Jeu de style funk avancé : affrontez des crews rivaux et la police."],
+  ["Bumper Stickers", "Jeu de puzzle match-three : lancez des bumpers sur le terrain."],
+  ["Castlevania 64", "Premier jeu Castlevania en 3D sur Nintendo 64."],
+  ["Castlevania: Circle of the Moon", "Premier Castlevania GBA au format Metroidvania."],
+  ["Castlevania: Symphony of the Night", "Le chef-d'œuvre légendaire du Metroidvania. Incarnez Alucard."],
+  ["Celeste", "Le jeu de plateforme moderne incontournable. Aidez Madeline à survivre."],
+  ["Celeste 64", "Petite plateforme 3D sincère recréant la magie de Celeste Mountain."],
+  ["Celeste (Open World)", "Randomizer pour le Celeste original. Contrôlez Madeline."],
+  ["ChecksFinder", "Jeu où vous évitez les mines et collectez des checks en complétant des grilles."],
+  ["Choo-Choo Charles", "Jeu d'horreur indépendant en 3D sur une île. Combattez un monstre-train."],
+  ["Civilization VI", "Jeu de strategy au tour par tour visant le contrôle de la planète."],
+  ["Clair Obscur: Expedition 33", "RPG au tour par tour fantastique doté de mécaniques en temps réel."],
+  ["Clique", "Un jeu incrémental/clicker conceptuel parfaitement adapté aux mécaniques."],
+  ["Cuphead", "Jeu d'action classique de type run and gun axé sur les combats de boss."],
+  ["Dark Souls", "Le RPG d'action légendaire et impitoyable de FromSoftware."],
+  ["Dark Souls II", "Le second opus de la trilogie des Souls, offrant un vaste monde à Drangleic."],
+  ["Dark Souls III", "Action-RPG de la série Souls par FromSoftware en vue à la troisième personne."],
+  ["Deltarune", "Le nouveau RPG acclamé par Toby Fox, créateur d'Undertale."],
+  ["DLCQuest", "Jeu de type Metroid où tout est un DLC en jeu."],
+  ["Donkey Kong 64", "L'aventure géante en 3D de la Nintendo 64. Collectionnez les bananes."],
+  ["Donkey Kong Country 3", "Jeu de plateforme avec Dixie Kong et son cousin Kiddy."],
+  ["DOOM 1993", "Développé par id Software, a inauguré et popularisé le first-person shooter."],
+  ["DOOM II", "FPS par id Software sorti sur MS-DOS en 1994 avec le super fusil à pompe."],
+  ["EarthBound", "JRPG à thème contemporain. Guidez quatre enfants dotés de pouvoirs psychiques."],
+  ["Factorio", "Jeu d'automatisation : construisez une usine et optimisez votre production."],
+  ["Faxanadu", "Jeu de plateforme action-RPG développé par Hudson Soft pour la NES."],
+  ["Final Fantasy I", "Le premier Final Fantasy sur NES (1987) revisité en randomizer."],
+  ["Final Fantasy Mystic Quest", "RPG simple et humoristique pour la Super Nintendo."],
+  ["Hades", "Le rogue-like d'action divin combinant combat effréné et narration riche."],
+  ["A Hat in Time", "Plateforme 3D mignon dans lequel une petite fille coud des chapeaux."],
+  ["Heretic", "FPS de dark fantasy sorti en décembre 1994, développé par Raven Software."],
+  ["Hollow Knight", "Sous la ville déclinante de Dirtmouth sommeille un vaste et ancien royaume."],
+  ["Hylics 2", "RPG surréaliste au style visuel unique et bizarre. Jouez Wayne."],
+  ["Inscryption", "Odyssée de cartes noire mêlant roguelite, puzzles et horreur."],
+  ["Jak and Daxter: The Precursor Legacy", "Plateforme d'action de 2001 (PS2) par Naughty Dog."],
+  ["Jigsaw", "Puzzles et cass-têtes relaxants intégrés dans la boucle de récompenses."],
+  ["Kingdom Hearts 1 Final Mix", "L'Action-RPG cross-over culte unissant Square Enix et Disney."],
+  ["Kingdom Hearts 2 Final Mix", "Action-RPG de Square Enix (2005), suite de Kingdom Hearts."],
+  ["Kirby Super Star", "Le jeu aux multiples aventures de la SNES. Incarnez Kirby."],
+  ["Kirby's Dream Land 3", "Rejoignez Kirby et ses amis animaux pour chasser la Matière Sombre."],
+  ["Landstalker", "Action-RPG isométrique classique. Jouez Nigel, un chasseur de trésors."],
+  ["The Legend of Zelda (NES)", "Rassemblez les huit fragments de la Triforce de la Sagesse."],
+  ["Lego Star Wars: The Complete Saga", "Revivez l'épopée des 6 premiers films Star Wars à la sauce LEGO."],
+  ["Lethal Company", "Jeu d'horreur coopératif en ligne où vous récupérez des ferrailles."],
+  ["Lingo", "Jeu de puzzles à la première personne dans la veine de The Witness."],
+  ["A Link Between Worlds", "L'aventure acclamée sur 3DS retournant dans l'univers de ALttP."],
+  ["A Link to the Past", "Action-aventure : incarnez Link pour sauver Hyrule."],
+  ["Links Awakening DX", "Naufragé sur l'île Koholint, Link doit réveiller le Poisson-Vent."],
+  ["Lufia II: Ancient Cave", "Dungeon crawler roguelike intégré au RPG Lufia II."],
+  ["Luigi's Mansion", "Le premier rôle de Luigi en tant que chasseur de fantômes sur GameCube."],
+  ["Majora's Mask", "L'aventure Zelda culte et sombre basée sur un cycle de 3 jours."],
+  ["Mario & Luigi Superstar Saga", "Partez à l'aventure avec Mario et Luigi dans le Royaume des Fèves."],
+  ["Mega Man 2", "En l'an 200X, le Dr Wily revient avec un nouveau groupe de Robot Masters."],
+  ["Mega Man 3", "Mega Man doit récupérer les Éléments d'Énergie et contrer la trahison."],
+  ["MegaMan Battle Network 3", "Jouez Lan et MegaMan pour stopper l'organisation criminelle WWW."],
+  ["Meritous", "Jeu de dungeon crawl bullet-hell généré procéduralement."],
+  ["The Messenger", "Un jeune ninja traverse un monde maudit pour livrer un parchemin vital."],
+  ["Metroid Fusion", "L'épisode tendu et scénarisé de la GBA opposant Samus au parasite X."],
+  ["Metroid Prime", "Le chef d'œuvre du FPS / Exploration 3D sur Tallon IV."],
+  ["Minecraft", "Le jeu de type bac à sable iconique mondial. Survivez et construisez."],
+  ["The Minish Cap", "Link explores Hyrule à échelle miniature grâce à son chapeau magique."],
+  ["Muse Dash", "Jeu de rythme avec plus de 400 chansons aléatoires."],
+  ["Noita", "Roguelite d'action magique dans un monde où chaque pixel est simulé."],
+  ["Ocarina of Time (Not Ship)", "Le Randomizer classique basé sur la ROM émulée Nintendo 64."],
+  ["Ocarina of Time (Ship of Harkinian)", "Le Randomizer optimisé basé sur le portage PC natif."],
+  ["Old School Runescape", "Le MMORPG rétro fantasy tel qu'il était en 2007."],
+  ["Oracle of Ages", "Le grand classique Game Boy Color axé sur les énigmes temporelles."],
+  ["Oracle of Seasons", "Le pendant de Oracle of Ages, se concentrant sur les changements de saisons."],
+  ["Outer Wilds", "Un chef-d'œuvre d'exploration et d'enquête spatiale en boucle temporelle."],
+  ["Overcooked! 2", "Jeu de cuisine arcade frénétique jusqu'à 4 joueurs."],
+  ["Paint", "L'application Microsoft classique réinventée en jeu Archipelago."],
+  ["Paper Mario 64", "Le premier RPG en papier charmant de Mario sorti sur Nintendo 64."],
+  ["Paper Mario: The Thousand-Year Door", "Le RPG Paper Mario acclamé de la GameCube aux combats sur scène."],
+  ["Path of Exile", "L'Action-RPG d'une profondeur colossale avec son arbre de talents."],
+  ["Pikmin 2", "Le second volet stratégique ajoutant le capitaine Olimar et Louie."],
+  ["Pokemon Black & White", "La cinquième génération de Pokémon proposant la région d'Unys."],
+  ["Pokemon Crystal", "La version définitive de la deuxième génération d'aventure Pokémon."],
+  ["Pokemon Emerald", "Le jeu phare de la Génération III dans la région Hoenn."],
+  ["Pokemon FireRed & LeafGreen", "Les remakes GBA soignés des toutes premières aventures de Kanto."],
+  ["Pokemon Mystery Dungeon: Explorers of Sky", "Le spin-off rogue-lite culte, salué pour son scénario émouvant."],
+  ["Pokemon Platinum", "La version ultime de la quatrième génération à Sinnoh."],
+  ["Pokemon Red and Blue", "Les RPG originaux de collection de monstres à Kanto."],
+  ["Portal 2", "Le jeu de puzzle coopératif et solo à la première personne de Valve."],
+  ["Quake 1", "Le classique révolutionnaire du FPS 3D nerveux d'id Software."],
+  ["Raft", "Jeu d'exploration et survie sur un petit radeau au milieu de l'océan."],
+  ["Resident Evil 2 Remake", "Le survival horror moderne et oppressant réinventant le cauchemar."],
+  ["Resident Evil 3 Remake", "L'aventure d'action horrifique de Jill Valentine fuyant le Nemesis."],
+  ["Risk of Rain 2", "Échappez à une planète extraterrestre chaotique en combattant des monstres."],
+  ["Rogue Legacy", "Le rogue-lite généalogique où vos descendants uniques vous succetzten."],
+  ["Satisfactory", "Jeu de construction d'usines en monde ouvert à la première personne."],
+  ["Saving Princess", "Explorez une station spatiale envahie de machines rebelles."],
+  ["Schedule 1", "Un puzzle-game textuel et logique complexe taillé pour les experts."],
+  ["Secret of Evermore", "Action-RPG SNES. Apprenez des sorts d'alchimie et rassemblez des pièces."],
+  ["shapez", "Jeu d'automatisation sur découpe, rotation et peinture de formes."],
+  ["Shivers", "Aventure pointer-cliquer sur thème horrifique dans un musée étrange."],
+  ["A Short Hike", "Aventure relaxante sur les îles du Pic du Faucon. Grimpez avec des plumes."],
+  ["Skyward Sword", "L'aventure Zelda contant les origines de la Master Sword."],
+  ["Slay the Spire", "Le rogue-like de deckbuilding de référence."],
+  ["Slime Rancher", "Une aventure adorable où vous élevez des slimes colorés."],
+  ["SMZ3", "Port Python du crossover Super Metroid et A Link to the Past."],
+  ["Sonic Adventure 2 Battle", "Jeu de plateforme d'action à travers 31 niveaux intenses."],
+  ["Sonic Adventure DX", "Le passage emblématique à la 3D du hérisson bleu sur Dreamcast."],
+  ["Starcraft 2", "Jeu de strategy en temps réel dans le secteur Koprulu."],
+  ["Stardew Valley", "RPG de vie rurale en monde ouvert. Cultivez, pêchez et explorez."],
+  ["Subnautica", "Jeu d'exploration sous-marine sur une planète extraterrestre aquatique."],
+  ["Super Mario 64", "Premier Super Mario en 3D offrant une liberté de mouvement totale."],
+  ["Super Mario Land 2", "Plateforme classique suivant Mario contre l'ignoble Wario."],
+  ["Super Mario Sunshine", "L'aventure ensoleillée sur l'île Delfino avec le jet d'eau J.E.T."],
+  ["Super Mario World", "Jeu de plateforme d'action culte sur la Super Nintendo."],
+  ["Super Metroid", "VARIA SM : randomizer d'items et de zones très adaptatif."],
+  ["Terraria", "Sandbox 2D multijoueur combinant minage, construction et combats."],
+  ["Timespinner", "Metroidvania magnifique inspiré des action-platformers des années 90."],
+  ["Touhou 6: Embodiment of Scarlet Devil", "Le légendaire shoot'em up bullet hell moderne."],
+  ["Touhou 7: Perfect Cherry Blossom", "Le septième opus iconique de la série Touhou."],
+  ["Touhou 8: Imperishable Night", "Le volet introduisant les duos d'humains et de yōkai."],
+  ["TUNIC", "Jeu d'action isométrique dans lequel un petit renard explore un monde mystérieux."],
+  ["Twilight Princess", "Le Zelda sombre où Link se métamorphose en loup."],
+  ["Ultrakill", "Un FPS rétro ultra-nerveux combinant le scoring et la vitesse."],
+  ["Undertale", "RPG où chaque choix compte. Épargnez ou détruisez."],
+  ["VVVVVV", "Jeu de plateforme où vous inversez la gravité au lieu de sauter."],
+  ["Wargroove", "Jeu de stratégie au tour par tour en style rétro."],
+  ["The Wind Waker", "Link navigue sur une mer vaste pour secourir sa sœur kidnappée."],
+  ["The Witness", "Jeu de puzzle en monde ouvert avec plus de 500 grilles."],
+  ["Yacht Dice", "Jeu de dés sur mesure pour Archipelago."],
+  ["Yoshi's Island", "Jeu de plateforme escortant bébé Mario à travers l'île."],
+  ["Yu-Gi-Oh! 2006", "Ultimate Masters: World Championship Tournament 2006 sur GBA."],
+  ["Zillion", "Jeu de type Metroidvania sorti en 1987 sur Sega Master System 8 bits."],
+  ["Zork: Grand Inquisitor", "Le jeu d'aventure humoristique et loufoque en pointer-cliquer."]
+];
+
+const chevronSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>`;
+let selectedGames = new Set();
+
+function escapeHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function highlight(text, query) {
+  if (!query) return escapeHtml(text);
+  const escaped = escapeHtml(text);
+  return escaped.replace(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'), '<span class="highlight">$1</span>');
+}
+
+function getUsername() {
+  return document.getElementById('username').value.trim();
+}
+
+function checkUserChange() {
+  const name = getUsername();
+  const panel = document.getElementById('user-panel');
+  
+  if (name !== "") {
+    panel.classList.add('active-border');
+  } else {
+    panel.classList.remove('active-border');
+    selectedGames.clear(); 
+  }
+  updateUI();
+}
+
+function toggleSelectCard(card, title, event) {
+  if (event.target.closest('.game-desc') || event.target.closest('.card-toggle')) return;
+  
+  if (getUsername() === "") {
+    document.getElementById('username').focus();
+    document.getElementById('user-panel').style.boxShadow = "0 0 25px var(--accent-crimson)";
+    setTimeout(() => { document.getElementById('user-panel').style.boxShadow = "var(--shadow-candle)"; }, 600);
+    return;
+  }
+
+  if (selectedGames.has(title)) {
+    selectedGames.delete(title);
+  } else {
+    if (selectedGames.size >= 3) return;
+    selectedGames.add(title);
+  }
+  
+  updateUI();
+}
+
+function updateUI() {
+  const hasUser = getUsername() !== "";
+  const size = selectedGames.size;
+
+  document.getElementById('selected-count').textContent = size;
+  document.getElementById('export-btn').disabled = (size === 0 || !hasUser);
+  document.getElementById('limit-msg').style.display = (size >= 3) ? 'inline' : 'none';
+
+  const cards = document.querySelectorAll('.game-card');
+  cards.forEach(card => {
+    const cardTitle = card.querySelector('.game-title').textContent;
+    
+    if (!hasUser) {
+      card.classList.add('locked-user');
+      card.classList.remove('selected', 'disabled-limit');
+      return;
+    }
+    card.classList.remove('locked-user');
+
+    if (selectedGames.has(cardTitle)) {
+      card.classList.add('selected');
+      card.classList.remove('disabled-limit');
+    } else {
+      card.classList.remove('selected');
+      if (size >= 3) {
+        card.classList.add('disabled-limit');
+      } else {
+        card.classList.remove('disabled-limit');
+      }
+    }
+  });
+}
+
+function filterGames() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const grid = document.getElementById('grid');
+  const countEl = document.getElementById('count');
+  grid.innerHTML = '';
+  let visible = 0;
+
+  games.forEach(([title, desc]) => {
+    if (!q || title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) {
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      
+      card.innerHTML = `
+        <div class="checkbox-wrap"><div class="custom-checkbox"></div></div>
+        <div class="card-main">
+          <div class="card-header">
+            <div class="game-title">${highlight(title, q)}</div>
+            <div class="card-toggle" onclick="event.stopPropagation(); this.closest('.game-card').classList.toggle('expanded')">${chevronSVG}</div>
+          </div>
+          <div class="game-desc">${highlight(desc, q)}</div>
+        </div>
+      `;
+      
+      card.addEventListener('click', (e) => toggleSelectCard(card, title, e));
+      grid.appendChild(card);
+      visible++;
+    }
+  });
+
+  countEl.textContent = `${visible} jeu(x) trouvé(s)`;
+  updateUI();
+}
+
+function exportSelection() {
+  const user = getUsername();
+  if (selectedGames.size === 0 || user === "") return;
+  
+  let content = "☠ === REGISTRE DE BORD - ARCHIPELAGO === ☠\n\n";
+  content += `Capitaine commanditaire : ${user}\n`;
+  content += `Date de la signature   : ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}\n`;
+  content += `Butin sélectionné       : ${selectedGames.size} Mondes / 3\n`;
+  content += "--------------------------------------------------\n\n";
+  content += "Voici les cartes au trésor à piller :\n\n";
+  
+  Array.from(selectedGames).sort().forEach((game, index) => {
+    content += `${index + 1}. [📜] ${game}\n`;
+  });
+  
+  content += "\n--------------------------------------------------\n";
+  content += "Que le vent vous emporte !";
+
+  const safeUser = user.replace(/[^a-zA-Z0-9]/g, "_");
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `registre_butin_${safeUser}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+filterGames();
+</script>
+</body>
+</html>
